@@ -29,7 +29,6 @@ public class World : MonoBehaviour {
 				pos.x = Mathf.Floor(pos.x / (float)chunkWidth) * chunkWidth;
 				pos.z = Mathf.Floor(pos.z / (float)chunkWidth) * chunkWidth;
 				
-				Debug.Log(pos);
 				Chunk chunk = Chunk.FindChunk(pos);
 				if (chunk != null) continue;
 				

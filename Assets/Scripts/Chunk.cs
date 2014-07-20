@@ -34,17 +34,21 @@ public class Chunk : MonoBehaviour {
 		
 		map = new byte[width, height, width];
 		
+		Random.seed = World.currentWorld.seed;
+		Vector3 offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
+		
 		for (int x = 0; x < World.currentWorld.chunkWidth; x++)
 		{
-			float noiseX = (float)(x) / 20;
+			float noiseX = Mathf.Abs((float)(x + transform.position.x + offset.x) / 20);
+			
 			
 			for (int y = 0; y < height; y++)
 			{
-				float noiseY = (float)(y ) / 20;
+				float noiseY = Mathf.Abs((float)(y  + transform.position.y + offset.y) / 20);
 				
 				for (int z = 0; z < width; z++)
 				{
-					float noiseZ = (float)(z) / 20;
+					float noiseZ = Mathf.Abs((float)(z + transform.position.z + offset.z) / 20);
 					
 					
 					float noiseValue = Noise.Generate(noiseX, noiseY, noiseZ);
