@@ -3,11 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using SimplexNoise;
 
+public enum BrickType {
+	None,
+	
+	RoughStone,
+	SmoothStone,
+	DarkStone,
+	PowderStone,
+	Granite,
+	Dirt, 
+	Sand,
+	GreenLattice,
+	
+	Taint,
+	Dust,
+	Rust,
+	Ice,
+	Snow,
+	DirtyIce,
+	Streaks,
+	Lava
+}
+
 [RequireComponent (typeof(MeshRenderer))]
 [RequireComponent (typeof(MeshCollider))]
 [RequireComponent (typeof(MeshFilter))]
 public class Chunk : MonoBehaviour {
 	
+	public static List<Chunk> chunksWaiting = new List<Chunk>();
 	public static List<Chunk> chunks = new List<Chunk>();
 	public static int width {
 		get { return World.currentWorld.chunkWidth; }
@@ -15,11 +38,16 @@ public class Chunk : MonoBehaviour {
 	public static int height {
 		get { return World.currentWorld.chunkHeight; }
 	}
+	public static float brickHeight {
+		get { return World.currentWorld.brickHeight; }
+	}
+	
 	public byte[,,] map;
 	public Mesh visualMesh;
 	protected MeshRenderer meshRenderer;
 	protected MeshCollider meshCollider;
 	protected MeshFilter meshFilter;
+	protected bool initialized = false;
 	
 	// Use this for initialization
 	void Start () {
@@ -30,41 +58,13 @@ public class Chunk : MonoBehaviour {
 		meshCollider = GetComponent<MeshCollider>();
 		meshFilter = GetComponent<MeshFilter>();
 		
+		chunksWaiting.Add(this);
 		
-		
-		map = new byte[width, height, width];
-		
-		Random.seed = World.currentWorld.seed;
-		Vector3 offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
-		
-		for (int x = 0; x < World.currentWorld.chunkWidth; x++)
+		if (chunksWaiting[0] == this)
 		{
-			float noiseX = Mathf.Abs((float)(x + transform.position.x + offset.x) / 20);
-			
-			
-			for (int y = 0; y < height; y++)
-			{
-				float noiseY = Mathf.Abs((float)(y  + transform.position.y + offset.y) / 20);
-				
-				for (int z = 0; z < width; z++)
-				{
-					float noiseZ = Mathf.Abs((float)(z + transform.position.z + offset.z) / 20);
-					
-					
-					float noiseValue = Noise.Generate(noiseX, noiseY, noiseZ);
-					
-					noiseValue += (10f - (float)y) / 10;
-					
-					
-					if (noiseValue > 0.2f)
-						map[x, y, z] = 1;
-					
-				}
-			}
+			StartCoroutine(CalculateMapFromScratch());
 		}
-		
-		StartCoroutine(CreateVisualMesh());
-		CreateVisualMesh();
+		//StartCoroutine(CreateVisualMesh());
 		
 	}
 	
@@ -73,7 +73,123 @@ public class Chunk : MonoBehaviour {
 		
 	}
 	
+	void OnDestroy()
+	{
+		if (chunksWaiting.Contains(this)) chunksWaiting.Remove(this);
+		chunks.Remove(this);
+	}
+	
+	public static byte GetTheoreticalByte(Vector3 pos) {
+		Random.seed = World.currentWorld.seed;
+		
+		Vector3 grain0Offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
+		Vector3 grain1Offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
+		Vector3 grain2Offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
+		
+		return GetTheoreticalByte(pos, grain0Offset, grain1Offset, grain2Offset);
+		
+	}
+	
+	public static byte GetTheoreticalByte(Vector3 pos, Vector3 offset0, Vector3 offset1, Vector3 offset2)
+	{
+		float moisture = CalculateNoiseValue(pos, offset2,  0.001f);		
+		float rockiness = CalculateNoiseValue(pos, offset2,  0.003f);		
+		
+		Biome biome = World.GetIdealBiome(moisture, rockiness);
+		
+		
+		//float heightBase = biome.minHeight;
+		//float maxHeight = biome.maxHeight;
+		//float heightSwing = maxHeight - heightBase;
+		
+		
+		float blobValue = CalculateNoiseValue(pos, offset1,  0.05f);
+		float mountainValue = CalculateNoiseValue(pos, offset0,  0.009f);
+		
+		//mountainValue += biome.mountainPowerBonus;
+		//if (mountainValue < 0) mountainValue = 0;
+		
+		//if (biome.mountainPower != 1)
+		//mountainValue = Mathf.Pow(mountainValue, biome.mountainPower);  //Mathf.Sqrt(mountainValue);
+		
+		byte brick = biome.GetBrick(Mathf.FloorToInt(pos.y), mountainValue, blobValue, moisture, rockiness);
+		
+		
+		//mountainValue *= heightSwing;
+		//mountainValue += heightBase;
+		
+		//mountainValue += (blobValue * 10) - 5f;
+		
+		
+		//if (mountainValue >= pos.y)
+		return brick;
+		//return 0;
+	}
+	
+	public virtual IEnumerator CalculateMapFromScratch() {
+		
+		map = new byte[width, height, width];
+		
+		Random.seed = World.currentWorld.seed;
+		Vector3 grain0Offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
+		Vector3 grain1Offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
+		Vector3 grain2Offset = new Vector3(Random.value * 10000, Random.value * 10000, Random.value * 10000);
+		
+		
+		
+		for (int x = 0; x < World.currentWorld.chunkWidth; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				for (int z = 0; z < width; z++)
+				{
+					map[x, y, z] = GetTheoreticalByte(new Vector3(x, y, z) + transform.position, grain0Offset, grain1Offset, grain2Offset);
+					
+				}
+			}
+		}
+		StartCoroutine(CreateVisualMesh());
+		
+		initialized = true;
+		
+		yield return 0;
+		chunksWaiting.Remove(this);
+		
+		while ( (chunksWaiting.Count > 0) && (chunksWaiting[0] == null) )
+			chunksWaiting.RemoveAt(0);
+		
+		if (chunksWaiting.Count > 0)
+		{
+			StartCoroutine(chunksWaiting[0].CalculateMapFromScratch());
+		}
+		
+	}
+	
+	public static float CalculateNoiseValue(Vector3 pos, Vector3 offset, float scale)
+	{
+		
+		float noiseX = Mathf.Abs((pos.x + offset.x) * scale);
+		float noiseY = Mathf.Abs((pos.y + offset.y) * scale);
+		float noiseZ = Mathf.Abs((pos.z + offset.z) * scale);
+		
+		return Mathf.Max(0, Noise.Generate(noiseX, noiseY, noiseZ));
+		
+	}
+	
+	
 	public virtual IEnumerator CreateVisualMesh() {
+		
+		if (this == null) 
+		{
+			while (chunksWaiting[0] == null)
+				chunksWaiting.RemoveAt(0);
+			if (chunksWaiting.Count > 0)
+			{
+				StartCoroutine(chunksWaiting[0].CalculateMapFromScratch());
+			}
+			yield return 0;
+		}
+		
 		visualMesh = new Mesh();
 		
 		List<Vector3> verts = new List<Vector3>();
@@ -123,8 +239,10 @@ public class Chunk : MonoBehaviour {
 		visualMesh.RecalculateNormals();
 		
 		meshFilter.mesh = visualMesh;
-		meshCollider.sharedMesh = visualMesh;
 		
+		
+		meshCollider.sharedMesh = null;
+		meshCollider.sharedMesh = visualMesh;
 		yield return 0;
 		
 	}
@@ -132,15 +250,35 @@ public class Chunk : MonoBehaviour {
 	{
 		int index = verts.Count;
 		
+		
+		float uvRow = ((corner.y + up.y) % 7);
+		if (uvRow >= 4) uvRow = 7 - uvRow;
+		uvRow /= 4f;
+		Vector2 uvCorner = new Vector2(0.00f, uvRow);
+		
+		if (brick < 8)
+			uvCorner.y += 0.125f;
+		
+		
+		
+		corner.y *= brickHeight;
+		up.y *= brickHeight;
+		right.y *= brickHeight;
+		
+		
 		verts.Add (corner);
 		verts.Add (corner + up);
 		verts.Add (corner + up + right);
 		verts.Add (corner + right);
 		
-		uvs.Add(new Vector2(0,0));
-		uvs.Add(new Vector2(0,1));
-		uvs.Add(new Vector2(1,1));
-		uvs.Add(new Vector2(1,0));
+		Vector2 uvWidth = new Vector2(0.125f, 0.125f);
+		
+		uvCorner.x += (float)((brick) % 8 - 1) / 8f;
+		
+		uvs.Add(uvCorner);
+		uvs.Add(new Vector2(uvCorner.x, uvCorner.y + uvWidth.y));
+		uvs.Add(new Vector2(uvCorner.x + uvWidth.x, uvCorner.y + uvWidth.y));
+		uvs.Add(new Vector2(uvCorner.x + uvWidth.x, uvCorner.y));
 		
 		if (reversed)
 		{
@@ -164,21 +302,47 @@ public class Chunk : MonoBehaviour {
 	}
 	public virtual bool IsTransparent (int x, int y, int z)
 	{
+		if ( y < 0) return false;
 		byte brick = GetByte(x,y,z);
 		switch (brick)
 		{
-		default:
 		case 0: 
 			return true;
-			
-		case 1: return false;
+		default:
+			return false;
 		}
 	}
 	public virtual byte GetByte (int x, int y , int z)
 	{
-		if ( (x < 0) || (y < 0) || (z < 0) || (y >= height) || (x >= width) || (z >= width))
+		
+		
+		if ((y < 0) || (y >= height))
 			return 0;
+		
+		Vector3 worldPos = new Vector3(x, y, z) + transform.position;
+		if (! initialized)
+			return GetTheoreticalByte(worldPos);
+		
+		
+		if ( (x < 0) || (z < 0)  || (x >= width) || (z >= width))
+		{
+			
+			Chunk chunk = Chunk.FindChunk(worldPos);
+			if (chunk == this) return 0;
+			if (chunk == null) 
+			{
+				return GetTheoreticalByte(worldPos);
+			}
+			return chunk.GetByte (worldPos);
+		}
 		return map[x,y,z];
+	}
+	public virtual byte GetByte(Vector3 worldPos) {
+		worldPos -= transform.position;
+		int x = Mathf.FloorToInt(worldPos.x);
+		int y = Mathf.FloorToInt(worldPos.y);
+		int z = Mathf.FloorToInt(worldPos.z);
+		return GetByte (x, y, z);
 	}
 	
 	public static Chunk FindChunk(Vector3 pos) {
@@ -195,6 +359,49 @@ public class Chunk : MonoBehaviour {
 		
 	}
 	
+	public bool SetBrick (byte brick, Vector3 worldPos)
+	{
+		worldPos -= transform.position;
+		return SetBrick(brick, Mathf.FloorToInt(worldPos.x),Mathf.FloorToInt(worldPos.y),Mathf.FloorToInt(worldPos.z));
+	}
+	public bool SetBrick (byte brick, int x, int y, int z)
+	{
+		if ( ( x < 0) || (y < 0) || (z < 0) || (x >= width) || (y >= height) || (z >= width) )
+		{
+			return false;
+		}
+		
+		if (map[x,y,z] == brick) return false;
+		map[x,y,z] = brick;
+		StartCoroutine(CreateVisualMesh());		
+		
+		if (x == 0)
+		{
+			Chunk chunk = FindChunk( new Vector3(x - 2, y, z) + transform.position);
+			if (chunk != null)
+				StartCoroutine(chunk.CreateVisualMesh());		
+		}
+		if (x == width - 1)
+		{
+			Chunk chunk = FindChunk( new Vector3(x + 2, y, z) + transform.position);
+			if (chunk != null)
+				StartCoroutine(chunk.CreateVisualMesh());		
+		}
+		if (z == 0)
+		{
+			Chunk chunk = FindChunk( new Vector3(x, y, z - 2) + transform.position);
+			if (chunk != null)
+				StartCoroutine(chunk.CreateVisualMesh());		
+		}
+		if (z == width - 1)
+		{
+			Chunk chunk = FindChunk( new Vector3(x, y, z + 2) + transform.position);
+			if (chunk != null)
+				StartCoroutine(chunk.CreateVisualMesh());		
+		}
+		
+		return true;
+	}
 }
 
 

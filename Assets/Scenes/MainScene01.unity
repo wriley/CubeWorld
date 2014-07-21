@@ -100,7 +100,7 @@ Transform:
   m_PrefabInternal: {fileID: 338977876}
   m_GameObject: {fileID: 83031732}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 17, z: 0}
+  m_LocalPosition: {x: 0, y: 200, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 539632961}
@@ -240,7 +240,7 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 1
     m_Resolution: -1
     m_Strength: 1
     m_Bias: .0500000007
@@ -266,8 +266,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 186198248}
-  m_LocalRotation: {x: -.129409537, y: .836516261, z: -.224143863, w: -.482962966}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: .234569728, y: -.408217937, z: .109381661, w: .875426114}
+  m_LocalPosition: {x: 0, y: 200, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -285,7 +285,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 17
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 2}
       propertyPath: m_LocalPosition.z
@@ -328,69 +328,6 @@ Prefab:
   m_RootGameObject: {fileID: 83031732}
   m_IsPrefabParent: 0
   m_IsExploded: 1
---- !u!1 &391343141
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 391343143}
-  - 108: {fileID: 391343142}
-  m_Layer: 0
-  m_Name: Fill Light
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!108 &391343142
-Light:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 391343141}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Type: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: .100000001
-  m_Range: 10
-  m_SpotAngle: 30
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 0
-    m_Resolution: -1
-    m_Strength: 1
-    m_Bias: .0500000007
-    m_Softness: 4
-    m_SoftnessFade: 1
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_ActuallyLightmapped: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_Lightmapping: 1
-  m_ShadowSamples: 1
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
-  m_IndirectIntensity: 1
-  m_AreaSize: {x: 1, y: 1}
---- !u!4 &391343143
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 391343141}
-  m_LocalRotation: {x: .129409537, y: -.836516261, z: -.224143863, w: -.482962966}
-  m_LocalPosition: {x: 3.7590394, y: 7.51807785, z: 2.17028213}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
 --- !u!1 &419860972
 GameObject:
   m_ObjectHideFlags: 0
@@ -400,10 +337,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 419860976}
   - 33: {fileID: 419860975}
-  - 65: {fileID: 419860974}
   - 23: {fileID: 419860973}
-  - 64: {fileID: 419860978}
   - 114: {fileID: 419860977}
+  - 64: {fileID: 419860978}
   m_Layer: 0
   m_Name: Chunk
   m_TagString: Untagged
@@ -419,12 +355,12 @@ Renderer:
   m_PrefabInternal: {fileID: 1463947531}
   m_GameObject: {fileID: 419860972}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 57347c73de5fe684fa1a98cdbaf35afc, type: 2}
+  - {fileID: 2100000, guid: 647bc76f55ab7e046b9dbe6297fb6d33, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -432,19 +368,6 @@ Renderer:
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!65 &419860974
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 6500000, guid: c240897693ba9ef4fb58fd008221e1e3,
-    type: 2}
-  m_PrefabInternal: {fileID: 1463947531}
-  m_GameObject: {fileID: 419860972}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &419860975
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -679,10 +602,93 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d30d374ffbc18d4384befb5c1438947, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkWidth: 20
-  chunkHeight: 20
+  defaultBrickTexture: {fileID: 2800000, guid: 1827ed980171cfd40b02cd5083760d5e, type: 3}
+  biomes:
+  - name: Flatlands
+    desc: 
+    idealMoisture: .5
+    idealRockiness: 0
+    brickLayers:
+    - name: Dirt
+      brick: 6
+      weight: .5
+      attributes:
+      - condition: 1
+        threshold: 10
+    - name: Sand
+      brick: 7
+      weight: 1
+      attributes:
+      - condition: 1
+        threshold: 12
+      - condition: 2
+        threshold: .300000012
+    - name: ICECREAMSCOOP
+      brick: 0
+      weight: 2
+      attributes:
+      - condition: 1
+        threshold: 12
+      - condition: 2
+        threshold: .5
+    - name: ICECREAM
+      brick: 13
+      weight: 3
+      attributes:
+      - condition: 1
+        threshold: 11
+      - condition: 2
+        threshold: .5
+    - name: Pockmarks
+      brick: 0
+      weight: 1
+      attributes:
+      - condition: 0
+        threshold: 3
+      - condition: 4
+        threshold: .5
+  - name: Hill
+    desc: 
+    idealMoisture: .5
+    idealRockiness: .699999988
+    brickLayers:
+    - name: Dirt
+      brick: 6
+      weight: .5
+      attributes:
+      - condition: 1
+        threshold: 10
+    - name: Mountain
+      brick: 11
+      weight: 1
+      attributes:
+      - condition: 1
+        threshold: 40
+      - condition: 2
+        threshold: -1
+    - name: Carver
+      brick: 0
+      weight: 1.5
+      attributes:
+      - condition: 0
+        threshold: 10
+      - condition: 9
+        threshold: 1
+      - condition: 5
+        threshold: .5
+    - name: Dumpington
+      brick: 8
+      weight: 1
+      attributes:
+      - condition: 1
+        threshold: 45
+      - condition: 4
+        threshold: .5
+  chunkWidth: 32
+  chunkHeight: 128
   seed: 0
-  viewRange: 80
+  viewRange: 101
+  brickHeight: 1
   chunkFab: {fileID: 11400000, guid: c240897693ba9ef4fb58fd008221e1e3, type: 2}
 --- !u!1001 &1463947531
 Prefab:
@@ -722,6 +728,18 @@ Prefab:
     - target: {fileID: 400000, guid: c240897693ba9ef4fb58fd008221e1e3, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: c240897693ba9ef4fb58fd008221e1e3, type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 647bc76f55ab7e046b9dbe6297fb6d33, type: 2}
+    - target: {fileID: 2300000, guid: c240897693ba9ef4fb58fd008221e1e3, type: 2}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: c240897693ba9ef4fb58fd008221e1e3, type: 2}
+      propertyPath: m_ReceiveShadows
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c240897693ba9ef4fb58fd008221e1e3, type: 2}
