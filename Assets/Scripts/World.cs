@@ -14,6 +14,8 @@ public class World : MonoBehaviour {
 	public float brickHeight = 1;
 	
 	public Chunk chunkFab;
+	public CharacterController characterController;
+	public GameObject playerObj;
 	
 	// Use this for initialization
 	void Awake () {
@@ -21,7 +23,7 @@ public class World : MonoBehaviour {
 		if (seed == 0)
 			seed = Random.Range(0, int.MaxValue);
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		
@@ -83,7 +85,23 @@ public class World : MonoBehaviour {
 		return biome;
 	}
 	
-	
+	public static float FindGroundLevel(Vector3 worldPos)
+	{
+		Vector3 myPos = worldPos;
+
+		for(int i = currentWorld.chunkHeight; i >= 0; i--)
+		{
+			myPos.y = i;
+			byte brick = Chunk.GetTheoreticalByte(myPos);
+			if(brick > 0)
+			{
+				Debug.Log("Found ground level of " + i + " at " + myPos);
+				return (float)i;
+			}
+		}
+		Debug.Log("Could not find ground level at " + myPos);
+		return currentWorld.chunkHeight;
+	}
 }
 
 

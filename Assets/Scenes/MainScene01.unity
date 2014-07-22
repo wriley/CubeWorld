@@ -684,12 +684,14 @@ MonoBehaviour:
         threshold: 45
       - condition: 4
         threshold: .5
-  chunkWidth: 32
-  chunkHeight: 128
+  chunkWidth: 16
+  chunkHeight: 64
   seed: 0
-  viewRange: 101
+  viewRange: 100
   brickHeight: 1
   chunkFab: {fileID: 11400000, guid: c240897693ba9ef4fb58fd008221e1e3, type: 2}
+  characterController: {fileID: 83031737}
+  playerObj: {fileID: 83031732}
 --- !u!1001 &1463947531
 Prefab:
   m_ObjectHideFlags: 0
